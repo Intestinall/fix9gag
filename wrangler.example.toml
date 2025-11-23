@@ -1,0 +1,27 @@
+name = "fix9gag"
+main = "build/index.js"
+compatibility_date = "2025-11-04"
+workers_dev = false
+preview_urls = false
+
+[build]
+command = "cargo install -q worker-build && worker-build --release --no-default-features --features cloudflare"
+
+[[kv_namespaces]]
+binding = "<kv_name>"
+id = "<kv_id>"
+
+[vars]
+HOSTNAME = "https://<domain_name>"
+KV_STORE_NAME = "<kv_name_like_binding>"
+
+[[routes]]
+pattern = "<<domain_name>_like_in_HOSTNAME>"
+custom_domain = true
+
+[observability]
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+invocation_logs = true
+persist = true

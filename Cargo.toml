@@ -1,0 +1,49 @@
+[package]
+name = "fix9gag"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+scraper = { version = "0.24.0"}
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = { version = "1.0.145"}
+reqwest = { version = "0.12.24" }
+url = { version = "2.5.7" }
+regex = { version = "1.12.2"}
+figment = { version = "0.10.19", features = ["toml", "env"] }
+validator = { version = "0.20.0", features = ["derive"] }
+uuid = { version = "1.18.1", features = ["v4"] }
+
+axum = { version = "0.8.6", default-features = false }
+
+# Native server
+tokio = { version = "1.48.0", features = ["full"], optional = true }
+
+# Cloudflare workers
+worker = { version = "0.6.7", features = ['http', "axum"], optional = true }
+worker-macros = { version = "0.6.7", features = ['http'], optional = true }
+web-time = { version = "1.1.0", optional = true }
+
+[dev-dependencies]
+rstest = { version = "0.26.1" }
+mock_instant = { version = "0.6.0" }
+
+[features]
+default = ["native"]
+native = ["dep:tokio", "axum/query", "axum/macros", "axum/tokio", "axum/http2", "axum/json"]
+cloudflare = ["dep:worker", "dep:worker-macros", "dep:web-time", "axum/query", "axum/json", "uuid/js"]
+
+[profile.dev]
+opt-level = 0
+incremental = true
+codegen-units = 256
+
+[profile.release]
+lto = true
+strip = true
+codegen-units = 1
+opt-level = 3
